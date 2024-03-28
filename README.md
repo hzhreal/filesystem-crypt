@@ -10,7 +10,7 @@ This script encrypts/decrypts all files in the current directory, and those belo
 - The encrypted file is structured as follows: Nonce - Data - HMAC SHA1 hash
 
 ## Decryption
-- User inputs AES GCM key and HMAC SHA1 key
+- User inputs AES key and HMAC SHA1 key
 - Key gets hashed repeatedly using SHA256
 - Nonce gets obtained from the start of the file
 - Data gets decrypted using AES256-GCM
