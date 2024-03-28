@@ -13,25 +13,25 @@ def main(argv: list[str]) -> None:
     if len(argv) != 4:
         print_usage(argv)
 
-    opt: str = argv[1]
+    opt = argv[1]
     if opt.lower() != "-d" and opt.lower() != "-e":
         print_usage(argv)
 
-    key: str = argv[2]
-    key: bytes = hexstr_to_bytes(key)
+    key = argv[2]
+    key = hexstr_to_bytes(key)
     if key == -1:
         print("Invalid key, it must be in hex.\n")
         exit(1)
     key = calc_hash_nokey(key)
 
-    hmac_sha1_key: str = argv[3]
-    hmac_sha1_key: bytes = hexstr_to_bytes(hmac_sha1_key)
+    hmac_sha1_key = argv[3]
+    hmac_sha1_key = hexstr_to_bytes(hmac_sha1_key)
     if hmac_sha1_key == -1:
         print("Invalid hash key, it must be in hex.\n")
         exit(1)
     hmac_sha1_key = calc_hash_nokey(hmac_sha1_key)
 
-    filePaths: list[str] = list_files(".")
+    filePaths = list_files(".")
     
     if not len(filePaths) >= 1:
         print("No files found.\n")
@@ -39,7 +39,7 @@ def main(argv: list[str]) -> None:
 
 
     for file in filePaths:
-        data: bytearray = read_file(file)
+        data = read_file(file)
         if opt.lower() == "-d":
             print(f"Decrypting {file}...")
             try:
@@ -50,10 +50,10 @@ def main(argv: list[str]) -> None:
                 print(f"{file} has been tampered with, skipping...\n")
                 continue
 
-            decrypted_data: bytes = gcm_decrypt(data_without_chks, key, nonce)
+            decrypted_data = gcm_decrypt(data_without_chks, key, nonce)
             decrypted_data += chks
 
-            decrypted_data_final: bytes = check_hash(decrypted_data, hmac_sha1_key)
+            decrypted_data_final = check_hash(decrypted_data, hmac_sha1_key)
 
             if decrypted_data_final != b"":
                 write_file(file, decrypted_data_final)
@@ -63,10 +63,10 @@ def main(argv: list[str]) -> None:
         
         else:
             print(f"Encrypting {file}...")
-            nonce: bytes = secrets.token_bytes(NONCE_LEN)
-            chks: bytes = calc_hash(data, hmac_sha1_key)
+            nonce = secrets.token_bytes(NONCE_LEN)
+            chks = calc_hash(data, hmac_sha1_key)
 
-            encrypted_data: bytes = gcm_encrypt(data, key, nonce)
+            encrypted_data  = gcm_encrypt(data, key, nonce)
             encrypted_data_final = nonce + encrypted_data + chks
 
             write_file(file, encrypted_data_final)
@@ -74,21 +74,21 @@ def main(argv: list[str]) -> None:
 
 def gcm_encrypt(plaintext: bytearray, key: bytes, nonce: bytes) -> bytes:
     cipher = AES.new(key, AES.MODE_GCM, nonce)
-    encrypted_data: bytes = cipher.encrypt(plaintext)
+    encrypted_data = cipher.encrypt(plaintext)
     return encrypted_data
 
-def gcm_decrypt(ciphertext: bytearray, key: bytes, nonce: bytes) -> bytes:
+def gcm_decrypt(ciphertext: bytearray, key: bytes, nonce: bytearray) -> bytes:
     cipher = AES.new(key, AES.MODE_GCM, nonce)
-    decrypted_data: bytes = cipher.decrypt(ciphertext)
+    decrypted_data = cipher.decrypt(ciphertext)
     return decrypted_data
 
 def calc_hash(data: bytearray, key: bytes) -> bytes:
     return hmac.new(key, data, hashlib.sha1).digest()
 
 def calc_hash_nokey(data: bytes) -> bytes:
-    msg: bytes = data
+    msg = data
     for _ in range(N_ROUND):
-        hashed: bytes = hashlib.sha256(msg).digest()
+        hashed = hashlib.sha256(msg).digest()
         msg = hashed
     return msg
 
@@ -109,12 +109,12 @@ def check_hash(data: bytearray, key: bytes) -> bytes:
 
 def list_files(path: str, filePaths: list[str] | None = None) -> list[str]:
     if filePaths is None:
-        filePaths: list[str] = []
+        filePaths = []
     
-    files: list[str] = os.listdir(path)
+    files = os.listdir(path)
 
     for file in files:
-        file_path: str = os.path.join(path, file)
+        file_path = os.path.join(path, file)
         if os.path.isfile(file_path) and file != os.path.basename(__file__):
             filePaths.append(file_path)
         
@@ -125,14 +125,14 @@ def list_files(path: str, filePaths: list[str] | None = None) -> list[str]:
 
 def hexstr_to_bytes(val: str) -> bytes | int:
     try:
-        prefix: str = val[:2]
+        prefix = val[:2]
         if prefix.lower() == "0x":
-            val: str = val[2:]
+            val = val[2:]
     except IndexError:
         return -1
 
     try:
-        retval: bytes = bytes.fromhex(val)
+        retval = bytes.fromhex(val)
     except ValueError:
         return -1
     
@@ -140,7 +140,7 @@ def hexstr_to_bytes(val: str) -> bytes | int:
 
 def read_file(file_path: str) -> bytearray:
     with open(file_path, "rb") as file:
-        data: bytearray = bytearray(file.read())
+        data = bytearray(file.read())
     return data
 
 def write_file(file_path: str, data) -> None:
