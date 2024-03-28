@@ -6,8 +6,8 @@ import secrets
 import time
 from Crypto.Cipher import AES
 
-N_ROUND: int = 5
-NONCE_LEN: int = 16
+N_ROUND = 5
+NONCE_LEN = 16
 
 def main(argv: list[str]) -> None:
     if len(argv) != 4:
