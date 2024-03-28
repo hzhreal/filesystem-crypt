@@ -22,4 +22,4 @@ This script encrypts/decrypts all files in the current directory, and those belo
 N_ROUND: How many times you want to hash the AES- and HMAC SHA1 key
 NONCE_LEN: The length of the nonce in bytes
 
-If the same values from the encryption are not used the decryption will fail.
+If the same values from the encryption are not used in the decryption, it will fail.
