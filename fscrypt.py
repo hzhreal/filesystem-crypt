@@ -115,7 +115,7 @@ def list_files(path: str, filePaths: list[str] | None = None) -> list[str]:
 
     for file in files:
         file_path = os.path.join(path, file)
-        if os.path.isfile(file_path) and file != os.path.basename(__file__):
+        if os.path.isfile(file_path) and os.path.abspath(file_path) != __file__:
             filePaths.append(file_path)
         
         elif os.path.isdir(file_path):
